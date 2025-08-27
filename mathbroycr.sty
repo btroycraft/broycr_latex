@@ -1,0 +1,111 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mathbroycr}[2025/08/25 v0.02 LaTeX macros for mathematical statistics]
+
+% Dependencies
+\RequirePackage{amsmath,amsfonts,amssymb,mathtools,bbm,xparse}
+
+% ---------- Paired delimiters (base) ----------
+% We use mathtools' \DeclarePairedDelimiter so that the starred form (*)
+% automatically sizes delimiters: \foo*{...}. The unstarred form is fixed-size.
+\DeclarePairedDelimiter{\Paren}{(}{)}
+\DeclarePairedDelimiter{\Brackd}{[}{]}
+\DeclarePairedDelimiter{\Setd}{\{}{\}}
+\DeclarePairedDelimiter{\Abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\Norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\Inner}{\langle}{\rangle}
+
+% ---------- Front-end macros with star + optional subscript ----------
+% Pattern: \cmd*[<sub>]{arg} autosizes delimiters, \cmd[<sub>]{arg} is fixed.
+% If <sub> is omitted, no subscript is printed.
+
+\NewDocumentCommand{\p}{s m}{%
+  \IfBooleanTF{#1}{\Paren*{#2}}{\Paren{#2}}%
+}
+
+TEST
+
+\NewDocumentCommand{\brk}{s m}{%
+  \IfBooleanTF{#1}{\Brackd*{#2}}{\Brackd{#2}}%
+}
+
+\NewDocumentCommand{\set}{s m}{%
+  \IfBooleanTF{#1}{\Setd*{#2}}{\Setd{#2}}%
+}
+
+\NewDocumentCommand{\abs}{s o m}{%
+  \IfBooleanTF{#1}{\Abs*{#3}}{\Abs{#3}}%
+  \IfNoValueF{#2}{_{#2}}%
+}
+
+\NewDocumentCommand{\norm}{s o m}{%
+  \IfBooleanTF{#1}{\Norm*{#3}}{\Norm{#3}}%
+  \IfNoValueF{#2}{_{#2}}%
+}
+
+\NewDocumentCommand{\inner}{s m}{%
+  \IfBooleanTF{#1}{\Inner*{#2}}{\Inner{#2}}%
+}
+
+% ---------- Probability / Expectation family ----------
+% Starred form uses auto-sized brackets for the argument; optional subscript
+% supplies the conditioning measure / distribution index.
+
+\NewDocumentCommand{\E}{s o m}{%
+  \mathbb{E}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}{\Brackd*{#3}}{\Brackd{#3}}%
+}
+
+\NewDocumentCommand{\var}{s o m}{%
+  \mathbb{V}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}{\Brackd*{#3}}{\Brackd{#3}}%
+}
+
+\NewDocumentCommand{\prob}{s o m}{%
+  \mathbb{P}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}{\Paren*{#3}}{\Paren{#3}}%
+}
+
+\DeclareRobustCommand{\given}{\nonscript\;\delimsize\vert\nonscript\;\mathopen{}}
+
+% Conditional probability: \probc*[<sub>]{A}{B}
+\NewDocumentCommand{\probc}{s o m m}{%
+  \mathbb{P}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}%
+    {\Paren*{#3 \given #4}}%
+    {\Paren{#3 \mid #4}}%
+}
+
+% Probability under an alternative measure (e.g., outer prob) \probo
+\NewDocumentCommand{\probo}{s o m}{%
+  \mathbb{P}^{*}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}{\Paren*{#3}}{\Paren{#3}}%
+}
+
+% Indicator: \ind*[<sub>]{A} (star for autosize parens)
+\NewDocumentCommand{\ind}{s o m}{%
+  \mathbbm{1}\IfNoValueF{#2}{_{#2}}%
+  \IfBooleanTF{#1}{\Setd*{#3}}{\Setd{#3}}%
+}
+
+% ---------- Common sets ----------
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\comps}{\mathbb{C}}
+
+\DeclareRobustCommand{\reloverset}[2]{\mathrel{\overset{\smash{\mathrm{#1}}}{#2}}}
+
+\newcommand{\iid}{\reloverset{iid}{\sim}}
+\newcommand{\toas}{\reloverset{a.s.}{\to}}
+\newcommand{\toprob}{\reloverset{p}{\to}}
+\newcommand{\todist}{\reloverset{d}{\to}}
+
+\newcommand{\mathsc}[1]{{\normalfont\textsc{#1}}}
+\newcommand{\de}[1]{\,\mathrm{d}#1}
+
+% ---------- Operators ----------
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\nullity}{nullity}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
